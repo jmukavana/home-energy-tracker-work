@@ -1,0 +1,15 @@
+{
+  "namespace": "com.jamlapps.kafka.event",
+  "type": "record",
+  "name": "AuditEvent",
+  "fields": [
+    { "name": "eventId", "type": "string" },
+    { "name": "actorType", "type": "string", "doc": "e.g. USER, SYSTEM" },
+    { "name": "actorId", "type": "long" },
+    { "name": "action", "type": "string", "doc": "e.g. API_KEY_CREATED, API_KEY_REVOKED" },
+    { "name": "resourceType", "type": "string" },
+    { "name": "resourceId", "type": "string" },
+    { "name": "detail", "type": "string" },
+    { "name": "occurredAtEpochMillis", "type": "long" }
+  ]
+}

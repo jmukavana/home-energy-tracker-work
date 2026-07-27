@@ -1,0 +1,12 @@
+{
+  "namespace": "com.jamlapps.kafka.event",
+  "type": "record",
+  "name": "NotificationRequest",
+  "fields": [
+    { "name": "notificationId", "type": "string", "doc": "UUID assigned by the producer." },
+    { "name": "userId", "type": "long" },
+    { "name": "recipientEmail", "type": "string" },
+    { "name": "subject", "type": "string" },
+    { "name": "body", "type": "string" }
+  ]
+}

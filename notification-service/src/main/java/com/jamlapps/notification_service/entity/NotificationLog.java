@@ -1,4 +1,4 @@
-package com.jamlapps.alert_service.entity;
+package com.jamlapps.notification_service.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,18 +12,26 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Delivery-tracking record — the bounded-context responsibility this service
+ * took over from alert-service's old {@code Alert} entity/table.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "alert")
-public class Alert {
+@Table(name = "notification_log")
+public class NotificationLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String notificationId;
     private Long userId;
-    private LocalDateTime createdAt;
+    private String recipientEmail;
+    private String subject;
     private boolean sent;
+    private LocalDateTime createdAt;
 }
