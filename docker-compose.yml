@@ -85,6 +85,21 @@ services:
     volumes:
       - ./docker/kafka_data:/var/lib/kafka/data
 
+  schema-registry:
+    container_name: schema-registry
+    image: confluentinc/cp-schema-registry:8.3.0
+    depends_on:
+      - kafka
+    ports:
+      - "8086:8081"  # 8081 collides with device-service's host port; 8086 is free
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
+      SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
+      SCHEMA_REGISTRY_KAFKASTORE_TOPIC_REPLICATION_FACTOR: 1
+    restart: unless-stopped
+
   kafka-ui:
     container_name: kafka-ui
     image: ghcr.io/kafbat/kafka-ui:latest
@@ -92,27 +107,13 @@ services:
       - "8070:8080"
     depends_on:
       - kafka
+      - schema-registry
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092  # Use internal Docker network name
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081
       DYNAMIC_CONFIG_ENABLED: 'true'
     restart: unless-stopped
-
-  influxdb:
-    image: influxdb:2.7
-    container_name: influxdb
-    ports:
-      - "8072:8086"
-    environment:
-      - DOCKER_INFLUXDB_INIT_MODE=setup
-      - DOCKER_INFLUXDB_INIT_USERNAME=admin
-      - DOCKER_INFLUXDB_INIT_PASSWORD=admin123
-      - DOCKER_INFLUXDB_INIT_ORG=jamlapps
-      - DOCKER_INFLUXDB_INIT_BUCKET=usage-bucket
-      - DOCKER_INFLUXDB_INIT_RETENTION=1w
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-token
-    volumes:
-      - ./influxdb_data:/var/lib/influxdb2
 
   mailpit:
     image: axllent/mailpit:latest
@@ -120,6 +121,19 @@ services:
     ports:
       - "8025:8025"
       - "1025:1025"
+
+  timescaledb:
+    image: timescale/timescaledb:2.28.3-pg16
+    container_name: timescaledb
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: usage_timeseries
+    ports:
+      - "5433:5432"  # 5432 is taken by a host-level PostgreSQL service on this machine
+    volumes:
+      - timescale-data:/var/lib/postgresql/data
 
   keycloak-db:
     container_name: keycloak-mysql
@@ -187,3 +201,4 @@ volumes:
   db-data:
   kafka-data:
   grafana-data:
+  timescale-data:

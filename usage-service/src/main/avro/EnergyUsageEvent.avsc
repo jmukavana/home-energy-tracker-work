@@ -1,0 +1,11 @@
+{
+  "namespace": "com.jamlapps.kafka.event",
+  "type": "record",
+  "name": "EnergyUsageEvent",
+  "fields": [
+    { "name": "eventId", "type": "string", "doc": "UUID assigned by the producer; used by consumers for at-least-once dedup." },
+    { "name": "deviceId", "type": "long" },
+    { "name": "energyConsumed", "type": "double" },
+    { "name": "timestampEpochMillis", "type": "long", "doc": "Instant.toEpochMilli(), UTC." }
+  ]
+}

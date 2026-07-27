@@ -1,0 +1,12 @@
+{
+  "namespace": "com.jamlapps.kafka.event",
+  "type": "record",
+  "name": "AlertingEvent",
+  "fields": [
+    { "name": "userId", "type": "long" },
+    { "name": "message", "type": "string" },
+    { "name": "threshold", "type": "double" },
+    { "name": "energyConsumed", "type": "double" },
+    { "name": "email", "type": "string" }
+  ]
+}

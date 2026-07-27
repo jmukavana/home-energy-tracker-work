@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @Slf4j
 public class IngestionService {
@@ -17,15 +19,14 @@ public class IngestionService {
     }
 
     public void ingestEnergyUsage(EnergyUsageDto input) {
-        // Convert DTO to Event
-        EnergyUsageEvent event = EnergyUsageEvent.builder()
-                .deviceId(input.deviceId())
-                .energyConsumed(input.energyConsumed())
-                .timestamp(input.timestamp())
+        EnergyUsageEvent event = EnergyUsageEvent.newBuilder()
+                .setEventId(UUID.randomUUID().toString())
+                .setDeviceId(input.deviceId())
+                .setEnergyConsumed(input.energyConsumed())
+                .setTimestampEpochMillis(input.timestamp().toEpochMilli())
                 .build();
 
-        // Send to Kafka Topic
-        kafkaTemplate.send("energy-usage", event);
+        kafkaTemplate.send("energy-usage-v2", event);
         log.info("Ingested Energy Usage Event: {}", event);
     }
 }
